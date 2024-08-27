@@ -70,14 +70,12 @@ async def read_messages():
     message_id = "0"
     while True:
         messages = await redis.xread({stream_id: message_id})
-        logger.info(messages)
         if messages:
             for message in messages[0][1]:
                 message_id = message[0]
                 content = message[1].get("message", "")
                 for client in clients:
                     await client.send(content)
-        await asyncio.sleep(2)
 
 
 async def client_handler(websocket, path):
